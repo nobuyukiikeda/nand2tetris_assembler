@@ -3,6 +3,8 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <bitset>
+
 
 #include "utils.h"
 Utils utils;
@@ -13,7 +15,7 @@ Utils utils;
 
 int main() {
     std::ifstream ifs(
-                      "/Users/nov/docs/02_勉強/nand2tetris/projects/06/max/Max.asm");
+                      "/mnt/c/Users/nobu/htdocs/nand_assembler/test_file/Add.asm");
     if(ifs.fail()) {
         std::cerr << "失敗" << std::endl;
     }
@@ -27,6 +29,7 @@ int main() {
     
     while (parser.has_more_command()) {
         
+        std::cout << "x行目" << std::endl;
         parser.advance();
         
         if (parser.is_a_command()) {
@@ -41,6 +44,7 @@ int main() {
             str = "111" + comp + dest + jump;
         }
     }
+    std::cout << "end while" << std::endl;
 
     std::cout << str << std::endl;
     return 0;

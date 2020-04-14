@@ -33,6 +33,7 @@ public:
     };
     void advance() {
         std::getline(ifstream, command);
+        std::cout << command << std::endl;
         // コメントを削除
         int comment_pos = command.find("//");
         if(comment_pos != std::string::npos) {

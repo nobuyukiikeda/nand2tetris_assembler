@@ -1,5 +1,5 @@
 //
-//  code.hpp
+//  Code.cpp
 //  nand2tetris_assembler
 //
 //  Created by 池田伸之 on 2020/02/23.
@@ -60,12 +60,24 @@ class Code {
     };
 public:
     std::string get_dest(std::string d) {
-        return dest.at(d);
+        if (dest[d].size() != 0) {
+            return dest[d];
+        } else {
+            return "000";
+        }
     }
     std::string get_comp(std::string c) {
-        return comp.at(c);
+        if (comp[c].size() != 0) {
+            return comp[c];
+        } else {
+            return "000";
+        }
     }
     std::string get_jump(std::string j) {
-        return jump.at(j);
+        if (jump[j].size() != 0) {
+            return jump[j];
+        } else {
+            return "000";
+        }
     }
 };

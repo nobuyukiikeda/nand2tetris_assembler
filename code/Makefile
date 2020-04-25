@@ -1,6 +1,6 @@
 gcc_options = -std=c++17 -Wall --pedantic-errors
 
-program : main.cpp utils.h Parser.cpp Code.cpp
+program : main.cpp utils.h Parser.cpp Code.cpp SymbolTable.cpp
 	g++ $(gcc_options) $< -o $@
 
 run : program

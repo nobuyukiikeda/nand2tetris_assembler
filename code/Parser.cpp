@@ -14,118 +14,177 @@
 
 #include "utils.h"
 
-enum CommandType { A_COMMAND, C_COMMAND, L_COMMAND, null };
+enum CommandType
+{
+    A_COMMAND,
+    C_COMMAND,
+    L_COMMAND,
+    null
+};
 
-class Parser {
+class Parser
+{
     std::ifstream ifstream;
     std::string command;
-    int line_num = 1;
     CommandType commandType;
 
 public:
     Parser(std::ifstream ifs) : ifstream(std::move(ifs)) {}
-    
-    bool has_more_command(){
-        if (ifstream.peek() != EOF) {
+
+    bool has_more_command()
+    {
+        if (ifstream.peek() != EOF)
+        {
             return true;
         }
         return false;
-    };
-    void advance() {
+    }
+
+    void advance()
+    {
         std::getline(ifstream, command);
-        std::cout << command << std::endl;
-        // コメントを削除
-        int comment_pos = command.find("//");
-        if(comment_pos != std::string::npos) {
+
+        // コメント、前後空白を削除
+        std::size_t comment_pos = command.find("//");
+        if (comment_pos != std::string::npos)
+        {
             command = command.substr(0, comment_pos);
         }
-        // 空行は無視
         Utils::trim(command);
-        if(command.length() == 0) {
-            advance();
-        } else {
+        if (command.length() > 0)
+        {
             set_command_type();
         }
     }
-    
-private:
-    void set_command_type() {
-        if(command.find("@") == 0) {
-            ++line_num;
-            commandType = A_COMMAND;
-        } else if(command.find("(") == 0 && command.find(")") == command.size()) {
-            commandType = L_COMMAND;
-        } else {
-            ++line_num;
-            commandType = C_COMMAND;
-        }
+
+    void reset()
+    {
+        ifstream.seekg(0);
+        command = "";
+        commandType = null;
     }
-    
-public:
-    bool is_a_command() {
-        if(commandType == A_COMMAND) {
+
+    std::string get_command()
+    {
+        return command;
+    }
+
+    bool is_a_command()
+    {
+        if (commandType == A_COMMAND)
+        {
             return true;
         }
         return false;
     }
-    bool is_c_command() {
-        if(commandType == C_COMMAND) {
+    bool is_c_command()
+    {
+        if (commandType == C_COMMAND)
+        {
             return true;
         }
         return false;
     }
-    bool is_l_command() {
-        if(commandType == L_COMMAND) {
+    bool is_l_command()
+    {
+        if (commandType == L_COMMAND)
+        {
             return true;
         }
         return false;
     }
-    std::string get_symbol() {
-        if(is_a_command()) {
-            return command.substr(1);
-        } else if(is_l_command()) {
-            return command.substr(1, -1);
+    std::string get_symbol()
+    {
+        if (is_a_command())
+        {
+            int number = std::atoi(command.substr(1).c_str());
+            if (number == 0 && command != "@0")
+            {
+                return command.substr(1);
+            }
+            return "";
+        }
+        else if (is_l_command())
+        {
+            return command.substr(1, command.size() - 2);
         }
         return "";
     }
-    std::string get_dest() {
-        if (is_c_command()) {
+    std::string get_dest()
+    {
+        if (is_c_command())
+        {
             std::string d = command;
-            if (command.find(";") != std::string::npos) {
-                d = d.substr(0, command.find(";"));
+            if (d.find(";") != std::string::npos)
+            {
+                d = d.substr(0, d.find(";"));
             }
-            if (command.find("=")) {
+            if (d.find("=") != std::string::npos)
+            {
                 d = d.substr(0, d.find("="));
-            } else {
+            }
+            else
+            {
                 d = "";
             }
             return d;
         }
         return "";
     }
-    std::string get_comp() {
-        if (is_c_command()) {
+    std::string get_comp()
+    {
+        if (is_c_command())
+        {
             std::string c = command;
-            if (command.find(";") != std::string::npos) {
-                c = c.substr(0, command.find(";"));
+            if (c.find(";") != std::string::npos)
+            {
+                c = c.substr(0, c.find(";"));
             }
-            if (command.find("=")) {
+            if (c.find("=") != std::string::npos)
+            {
                 c = c.substr(c.find("=") + 1);
             }
             return c;
         }
         return "";
     }
-    std::string get_jump() {
-        if (is_c_command()) {
+    std::string get_jump()
+    {
+        if (is_c_command())
+        {
             std::string j = command;
-            if (command.find(";") != std::string::npos) {
-                j = j.substr(command.find(";") + 1);
-            } else {
+            if (j.find(";") != std::string::npos)
+            {
+                j = j.substr(j.find(";") + 1);
+            }
+            else
+            {
                 j = "";
             }
             return j;
         }
         return "";
+    }
+
+    void replace_symbol(int number)
+    {
+        command = "@" + std::to_string(number);
+    }
+
+private:
+    void set_command_type()
+    {
+        if (command.find("@") == 0)
+        {
+            commandType = A_COMMAND;
+        }
+        else if (command.find("(") == 0 && command.find(")") + 1 == command.size())
+        {
+            commandType = L_COMMAND;
+        }
+        else
+        {
+            commandType = C_COMMAND;
+        }
     }
 };

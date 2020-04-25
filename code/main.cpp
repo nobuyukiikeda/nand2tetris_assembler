@@ -18,9 +18,6 @@ int main()
     std::cout << "ファイルパスを入力してください。" << std::endl;
     std::string path;
     std::cin >> path;
-    // path = "/mnt/c/Users/nobu/htdocs/nand_assembler/test_file/MaxL.asm";
-
-    path = "/mnt/c/Users/nobu/htdocs/nand_assembler/test_file/" + path;
 
     // 出力ファイルのセット
     std::string filename = path;
